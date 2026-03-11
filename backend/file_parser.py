@@ -4,8 +4,11 @@ file_parser.py — PDF, DOCX, TXT parsing and text chunking utilities.
 
 from __future__ import annotations
 
+import io
 import re
 from typing import List
+
+from pptx import Presentation
 
 
 def parse_file(file_bytes: bytes, filename: str) -> str:
@@ -27,11 +30,13 @@ def parse_file(file_bytes: bytes, filename: str) -> str:
         return _parse_docx(file_bytes)
     elif lower.endswith(".txt"):
         return _parse_txt(file_bytes)
+    elif lower.endswith(".pptx") or lower.endswith(".ppt"):
+        return _parse_pptx(file_bytes)
     else:
         ext = filename.rsplit(".", 1)[-1] if "." in filename else "unknown"
         raise ValueError(
             f"Unsupported file type '.{ext}'. "
-            "Only PDF, DOCX, and TXT files are accepted."
+            "Only PDF, DOCX, TXT, and PPTX files are accepted."
         )
 
 
@@ -83,6 +88,27 @@ def _parse_txt(file_bytes: bytes) -> str:
         return file_bytes.decode("utf-8")
     except UnicodeDecodeError:
         return file_bytes.decode("latin-1")
+
+
+def _parse_pptx(file_bytes: bytes) -> str:
+    """Extract text from all slides of a PowerPoint (.pptx) file."""
+    try:
+        prs = Presentation(io.BytesIO(file_bytes))
+        text_parts = []
+        for slide_num, slide in enumerate(prs.slides, 1):
+            slide_texts = []
+            for shape in slide.shapes:
+                if hasattr(shape, "text") and shape.text.strip():
+                    slide_texts.append(shape.text.strip())
+            if slide_texts:
+                text_parts.append(f"[Slide {slide_num}]\n" + "\n".join(slide_texts))
+        return "\n\n".join(text_parts)
+    except ImportError:
+        raise RuntimeError(
+            "python-pptx is not installed. Run: pip install python-pptx"
+        )
+    except Exception as exc:
+        raise ValueError(f"Failed to parse PowerPoint: {exc}") from exc
 
 
 # ---------------------------------------------------------------------------

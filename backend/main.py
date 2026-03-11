@@ -194,13 +194,13 @@ async def upload_material(file: UploadFile = File(...)):
     mgr = get_embedding_manager()
 
     # Validate content type / extension
-    allowed_extensions = {".pdf", ".docx", ".txt"}
+    allowed_extensions = {".pdf", ".docx", ".txt", ".pptx", ".ppt"}
     filename = file.filename or "upload"
     ext = ("." + filename.rsplit(".", 1)[-1].lower()) if "." in filename else ""
     if ext not in allowed_extensions:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Unsupported file type '{ext}'. Accepted: PDF, DOCX, TXT.",
+            detail=f"Unsupported file type '{ext}'. Accepted: PDF, DOCX, TXT, PPTX.",
         )
 
     # Read and validate size

@@ -938,7 +938,7 @@ body {
 
       <div class="card">
         <div class="drop-zone" id="dropZone">
-          <input type="file" id="fileInput" accept=".pdf,.docx,.txt" />
+          <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.pptx" />
           <span class="drop-zone-icon">📂</span>
           <div class="drop-zone-title">Drop your file here</div>
           <div class="drop-zone-sub">or <span class="gold">click to browse</span></div>
@@ -946,6 +946,7 @@ body {
             <span class="format-badge">PDF</span>
             <span class="format-badge">DOCX</span>
             <span class="format-badge">TXT</span>
+            <span class="format-badge">PPTX</span>
           </div>
         </div>
         <div class="progress-wrap" id="progressWrap">
@@ -1170,10 +1171,10 @@ class QuizMindApp {
       this.toast(`File exceeds ${MAX_MB} MB limit.`, "error");
       return;
     }
-    const allowed = [".pdf", ".docx", ".txt"];
+    const allowed = [".pdf", ".docx", ".txt", ".pptx"];
     const ext = "." + file.name.split(".").pop().toLowerCase();
     if (!allowed.includes(ext)) {
-      this.toast(`Unsupported format '${ext}'. Use PDF, DOCX, or TXT.`, "error");
+      this.toast(`Unsupported format '${ext}'. Use PDF, DOCX, TXT, or PPTX.`, "error");
       return;
     }
 
