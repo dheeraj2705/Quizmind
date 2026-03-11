@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: quizmind-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false          # you'll paste it in Render dashboard
+      - key: CHROMA_PERSIST_DIR
+        value: ./chroma_db
+      - key: MAX_FILE_SIZE_MB
+        value: "50"
